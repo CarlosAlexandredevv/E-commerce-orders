@@ -1,4 +1,3 @@
-// src/config/typeorm.config.ts
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { OrderEntity } from '../infrastructure/db/order.entity';
 

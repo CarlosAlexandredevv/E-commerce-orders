@@ -1,13 +1,9 @@
-// src/app.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OrderEntity } from './infrastructure/db/order.entity';
 import { typeOrmConfig } from './config/typeorm.config';
+import { OrderModule } from './interfaces/controllers/order.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(typeOrmConfig),
-    TypeOrmModule.forFeature([OrderEntity]),
-  ],
+  imports: [TypeOrmModule.forRoot(typeOrmConfig), OrderModule],
 })
 export class AppModule {}

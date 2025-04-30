@@ -1,0 +1,9 @@
+POST http://localhost:3000/pedidos
+Content-Type: application/json
+
+{
+  "product": "Notebook",
+  "quantity": 2,
+  "price": 4500,
+  "customer": "João da Silva"
+}
