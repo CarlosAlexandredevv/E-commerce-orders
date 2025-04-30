@@ -1,0 +1,20 @@
+{
+  "material-icon-theme.folders.associations": {
+    "domain": "class",
+    "application": "controller",
+    "use-cases": "functions",
+    "repositories": "repository",
+    "infrastructure": "tools",
+    "database": "database",
+    "queue": "azure-pipelines",
+    "interfaces": "interface",
+    "controllers": "controller",
+    "dto": "typescript",
+    "entities": "class"
+  },
+  "material-icon-theme.files.associations": {
+    "*.entity.ts": "class",
+    "*.usecase.ts": "functions",
+    "*.dto.ts": "typescript"
+  }
+}
