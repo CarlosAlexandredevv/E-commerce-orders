@@ -11,10 +11,5 @@
     "controllers": "controller",
     "dto": "typescript",
     "entities": "class"
-  },
-  "material-icon-theme.files.associations": {
-    "*.entity.ts": "class",
-    "*.usecase.ts": "functions",
-    "*.dto.ts": "typescript"
   }
 }
