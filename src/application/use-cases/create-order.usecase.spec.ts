@@ -1,6 +1,4 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-
 import { CreateOrderUseCase } from './create-order.usecase';
 import { OrderEntity } from '../../infrastructure/db/order.entity';
 import { CustomerEntity } from '../../infrastructure/db/customer.entity';
@@ -8,6 +6,11 @@ import { ProductEntity } from '../../infrastructure/db/product.entity';
 import { CreateOrderDto } from '../../interfaces/controllers/dto/create-order.dto';
 import { OrderStatus } from '../../domain/enum/order-status';
 import { getQueueToken } from '@nestjs/bull';
+import {
+  ORDER_REPOSITORY,
+  CUSTOMER_REPOSITORY,
+  PRODUCT_REPOSITORY,
+} from '../../domain/tokens/repository.tokens';
 
 const mockOrderForProduct: Partial<OrderEntity> = {
   id: 'order-placeholder-uuid',
@@ -50,7 +53,7 @@ const mockOrderRepository = {
   save: jest.fn(),
 };
 const mockCustomerRepository = {
-  findOne: jest.fn(),
+  findByEmail: jest.fn(),
   create: jest.fn(),
   save: jest.fn(),
 };
@@ -69,15 +72,15 @@ describe('CreateOrderUseCase (Simple)', () => {
       providers: [
         CreateOrderUseCase,
         {
-          provide: getRepositoryToken(OrderEntity),
+          provide: ORDER_REPOSITORY,
           useValue: mockOrderRepository,
         },
         {
-          provide: getRepositoryToken(CustomerEntity),
+          provide: CUSTOMER_REPOSITORY,
           useValue: mockCustomerRepository,
         },
         {
-          provide: getRepositoryToken(ProductEntity),
+          provide: PRODUCT_REPOSITORY,
           useValue: mockProductRepository,
         },
         {
@@ -102,7 +105,7 @@ describe('CreateOrderUseCase (Simple)', () => {
   });
 
   it('should call repositories correctly and return order data for a new customer', async () => {
-    mockCustomerRepository.findOne.mockResolvedValue(null);
+    mockCustomerRepository.findByEmail.mockResolvedValue(null);
 
     const inputData: CreateOrderDto = {
       customer: {
@@ -127,10 +130,10 @@ describe('CreateOrderUseCase (Simple)', () => {
 
     const result = await useCase.execute(inputData);
 
-    expect(mockCustomerRepository.findOne).toHaveBeenCalledTimes(1);
-    expect(mockCustomerRepository.findOne).toHaveBeenCalledWith({
-      where: { email: inputData.customer.email },
-    });
+    expect(mockCustomerRepository.findByEmail).toHaveBeenCalledTimes(1);
+    expect(mockCustomerRepository.findByEmail).toHaveBeenCalledWith(
+      inputData.customer.email,
+    );
 
     expect(mockCustomerRepository.create).toHaveBeenCalledTimes(1);
     expect(mockCustomerRepository.create).toHaveBeenCalledWith(
@@ -163,13 +166,13 @@ describe('CreateOrderUseCase (Simple)', () => {
     expect(result.order.products.length).toEqual(mockProducts.length);
   });
 
-  it('should call findOne and save (update) but not create for existing customer', async () => {
+  it('should call findByEmail and save (update) but not create for existing customer', async () => {
     const existingCustomerMock = {
       id: 5,
       email: 'existente@dto.com',
       name: 'Antigo',
     };
-    mockCustomerRepository.findOne.mockResolvedValue(existingCustomerMock);
+    mockCustomerRepository.findByEmail.mockResolvedValue(existingCustomerMock);
 
     const inputData: CreateOrderDto = {
       customer: {
@@ -197,7 +200,7 @@ describe('CreateOrderUseCase (Simple)', () => {
 
     await useCase.execute(inputData);
 
-    expect(mockCustomerRepository.findOne).toHaveBeenCalledTimes(1);
+    expect(mockCustomerRepository.findByEmail).toHaveBeenCalledTimes(1);
     expect(mockCustomerRepository.create).not.toHaveBeenCalled();
     expect(mockCustomerRepository.save).toHaveBeenCalledTimes(1);
     expect(mockCustomerRepository.save).toHaveBeenCalledWith(

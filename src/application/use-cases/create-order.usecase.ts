@@ -12,7 +12,7 @@ import {
   ORDER_REPOSITORY,
   CUSTOMER_REPOSITORY,
   PRODUCT_REPOSITORY,
-} from 'src/domain/tokens/repository.tokens';
+} from '../../domain/tokens/repository.tokens';
 
 @Injectable()
 export class CreateOrderUseCase {
