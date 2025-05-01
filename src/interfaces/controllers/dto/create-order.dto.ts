@@ -10,7 +10,7 @@ export class CreateOrderDto {
 
   @ValidateNested({ each: true })
   @Type(() => ProductDto)
-  @IsArray()
+  @IsArray({ message: 'Products must be an array.' })
   @ArrayMinSize(1, { message: 'At least one product is required.' })
   products: ProductDto[];
 }

@@ -5,11 +5,11 @@ export class ProductDto {
   @IsNotEmpty({ message: 'Product name is required.' })
   name: string;
 
-  @IsNumber({}, { message: 'Quantity must be a number.' })
-  @Min(1, { message: 'Minimum quantity is 1.' })
+  @IsNumber({}, { message: 'Product quantity must be a number.' })
+  @Min(1, { message: 'Product quantity must be at least 1.' })
   quantity: number;
 
-  @IsNumber({}, { message: 'Price must be a number.' })
-  @Min(0.01, { message: 'Minimum price is $0.01.' })
+  @IsNumber({}, { message: 'Product price must be a number.' })
+  @Min(0.01, { message: 'Product price must be at least $0.01.' })
   price: number;
 }
