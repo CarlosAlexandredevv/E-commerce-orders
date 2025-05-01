@@ -22,4 +22,28 @@ export class OrderRepository implements IOrderRepository {
   findOneById(id: string): Promise<OrderEntity | null> {
     return this.repo.findOne({ where: { id } });
   }
+
+  async findAllWithFilters(filters: {
+    status?: string;
+    startDate?: string;
+    endDate?: string;
+  }): Promise<OrderEntity[]> {
+    const query = this.repo.createQueryBuilder('order');
+
+    if (filters.status) {
+      query.andWhere('order.status = :status', { status: filters.status });
+    }
+    if (filters.startDate) {
+      query.andWhere('order.createdAt >= :startDate', {
+        startDate: filters.startDate,
+      });
+    }
+    if (filters.endDate) {
+      query.andWhere('order.createdAt <= :endDate', {
+        endDate: filters.endDate,
+      });
+    }
+
+    return query.getMany();
+  }
 }
