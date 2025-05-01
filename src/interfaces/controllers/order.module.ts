@@ -15,6 +15,7 @@ import { OrderController } from './order.controller';
 import { OrderRepository } from 'src/infrastructure/repositories/order.repository.impl';
 import { CustomerRepository } from 'src/infrastructure/repositories/customer.repository.impl';
 import { ProductRepository } from 'src/infrastructure/repositories/product.repository.impl';
+import { ListOrdersUseCase } from 'src/application/use-cases/list-orders.usecase';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ProductRepository } from 'src/infrastructure/repositories/product.repos
   providers: [
     CreateOrderUseCase,
     OrderProcessor,
+    ListOrdersUseCase,
     {
       provide: ORDER_REPOSITORY,
       useClass: OrderRepository,
