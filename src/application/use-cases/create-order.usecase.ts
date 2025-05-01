@@ -18,17 +18,8 @@ export class CreateOrderUseCase {
   ) {}
 
   async execute(data: CreateOrderDto) {
-    let customer = await this.customerRepo.findOne({
-      where: { email: data.customer.email },
-    });
-
-    if (!customer) {
-      customer = this.customerRepo.create(data.customer);
-      await this.customerRepo.save(customer);
-    }
-
-    const products = data.products.map((prod) => this.productRepo.create(prod));
-    await this.productRepo.save(products);
+    const customer = await this.upsertCustomer(data.customer);
+    const products = await this.createProducts(data.products);
 
     const order = this.orderRepo.create({
       customer,
@@ -45,5 +36,28 @@ export class CreateOrderUseCase {
         customer: order.customer,
       },
     };
+  }
+
+  private async upsertCustomer(
+    customerData: Partial<CustomerEntity>,
+  ): Promise<CustomerEntity> {
+    let customer = await this.customerRepo.findOne({
+      where: { email: customerData.email },
+    });
+
+    if (!customer) {
+      customer = this.customerRepo.create(customerData);
+    } else {
+      Object.assign(customer, customerData);
+    }
+
+    return this.customerRepo.save(customer);
+  }
+
+  private async createProducts(
+    productsData: Partial<ProductEntity>[],
+  ): Promise<ProductEntity[]> {
+    const products = productsData.map((prod) => this.productRepo.create(prod));
+    return this.productRepo.save(products);
   }
 }
