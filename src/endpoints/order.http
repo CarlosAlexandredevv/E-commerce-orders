@@ -2,8 +2,35 @@ POST http://localhost:3000/pedidos
 Content-Type: application/json
 
 {
-  "product": "Notebook",
-  "quantity": 2,
-  "price": 4500,
-  "customer": "João da Silva"
+  "products": [
+    {
+      "name": "Notebook Dell",
+      "quantity": 2,
+      "price": 4500
+    },
+    {
+      "name": "Mouse Logitech",
+      "quantity": 1,
+      "price": 150
+    },
+    {
+      "name": "Teclado Mecânico",
+      "quantity": 1,
+      "price": 300
+    }
+  ],
+  "customer": {
+    "name": "João da Silva",
+    "telefone": "11988887777",
+    "cpf": "123.456.789-00",
+    "address": {
+      "logradouro": "Rua Exemplo",
+      "numero": "123",
+      "complemento": "Apto 45",
+      "bairro": "Centro",
+      "cidade": "Fortaleza",
+      "estado": "CE",
+      "cep": "01000-000"
+    }
+  }
 }

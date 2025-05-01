@@ -3,31 +3,34 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
 } from 'typeorm';
+import { CustomerEntity } from './customer.entity';
+import { ProductEntity } from './product.entity';
 
 @Entity('orders')
 export class OrderEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column()
-  product: string;
-
-  @Column()
-  quantity: number;
-
-  @Column('decimal')
-  price: number;
-
-  @Column()
-  customer: string;
+  @CreateDateColumn()
+  createdAt: Date;
 
   @Column({ default: 'Pendente' })
   status: string;
 
-  @CreateDateColumn()
-  createdAt: Date;
-
   @Column({ type: 'timestamp', nullable: true })
   processedAt: Date;
+
+  @ManyToOne(() => CustomerEntity, { cascade: true, eager: true })
+  @JoinColumn()
+  customer: CustomerEntity;
+
+  @OneToMany(() => ProductEntity, (product) => product.order, {
+    cascade: true,
+    eager: true,
+  })
+  products: ProductEntity[];
 }

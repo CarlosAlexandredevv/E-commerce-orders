@@ -1,17 +1,11 @@
-export enum OrderStatus {
-  PENDING = 'Pendente',
-  PROCESSED = 'Processado',
-}
+import { Customer } from './customer.entity';
+import { Product } from './product.entity';
 
 export class Order {
-  constructor(
-    public id: string,
-    public product: string,
-    public quantity: number,
-    public price: number,
-    public customer: string,
-    public status: OrderStatus = OrderStatus.PENDING,
-    public createdAt: Date = new Date(),
-    public processedAt?: Date,
-  ) {}
+  id?: string;
+  createdAt?: Date;
+  status?: string;
+  processedAt?: Date;
+  customer: Customer;
+  products: Product[];
 }

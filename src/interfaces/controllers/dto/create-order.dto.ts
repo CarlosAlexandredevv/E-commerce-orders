@@ -1,15 +1,15 @@
-import { IsString, IsNumber } from 'class-validator';
+import { ValidateNested, IsArray } from 'class-validator';
+import { Type } from 'class-transformer';
+import { CustomerDto } from './customer.dto';
+import { ProductDto } from './product.dto';
 
 export class CreateOrderDto {
-  @IsString()
-  product: string;
+  @ValidateNested()
+  @Type(() => CustomerDto)
+  customer: CustomerDto;
 
-  @IsNumber()
-  quantity: number;
-
-  @IsNumber()
-  price: number;
-
-  @IsString()
-  customer: string;
+  @ValidateNested({ each: true })
+  @Type(() => ProductDto)
+  @IsArray()
+  products: ProductDto[];
 }
