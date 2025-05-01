@@ -1,10 +1,9 @@
 import { Process, Processor } from '@nestjs/bull';
 import { Job } from 'bull';
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { OrderEntity } from '../../infrastructure/db/order.entity';
+import { Injectable, Logger, Inject } from '@nestjs/common';
 import { OrderStatus } from '../../domain/enum/order-status';
+import { ORDER_REPOSITORY } from 'src/domain/tokens/repository.tokens';
+import { IOrderRepository } from 'src/domain/repositories/order.repository';
 
 @Processor('order')
 @Injectable()
@@ -12,16 +11,14 @@ export class OrderProcessor {
   private readonly logger = new Logger(OrderProcessor.name);
 
   constructor(
-    @InjectRepository(OrderEntity)
-    private readonly orderRepo: Repository<OrderEntity>,
+    @Inject(ORDER_REPOSITORY)
+    private readonly orderRepo: IOrderRepository,
   ) {}
 
   @Process('processOrder')
   async handleProcessOrder(job: Job<{ orderId: string }>) {
     const { orderId } = job.data;
-    const order = await this.orderRepo.findOne({
-      where: { id: orderId },
-    });
+    const order = await this.orderRepo.findOneById(orderId);
 
     if (!order) {
       throw new Error('Order not found');
