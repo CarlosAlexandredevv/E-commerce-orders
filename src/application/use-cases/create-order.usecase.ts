@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { OrderEntity } from 'src/infrastructure/db/order.entity';
-import { CustomerEntity } from 'src/infrastructure/db/customer.entity';
-import { ProductEntity } from 'src/infrastructure/db/product.entity';
-import { CreateOrderDto } from 'src/interfaces/controllers/dto/create-order.dto';
+import { OrderEntity } from '../../infrastructure/db/order.entity';
+import { CustomerEntity } from '../../infrastructure/db/customer.entity';
+import { ProductEntity } from '../../infrastructure/db/product.entity';
+import { CreateOrderDto } from '../../interfaces/controllers/dto/create-order.dto';
 
 @Injectable()
 export class CreateOrderUseCase {
@@ -26,15 +26,11 @@ export class CreateOrderUseCase {
       products,
       status: 'Pending',
     });
-    await this.orderRepo.save(order);
+
+    const savedOrder = await this.orderRepo.save(order);
 
     return {
-      order: {
-        id: order.id,
-        created_at: order.createdAt,
-        products: order.products,
-        customer: order.customer,
-      },
+      order: savedOrder,
     };
   }
 
