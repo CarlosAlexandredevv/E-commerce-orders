@@ -9,6 +9,9 @@ export class CustomerEntity {
   @Column()
   name: string;
 
+  @Column({ unique: true })
+  email: string;
+
   @Column()
   telefone: string;
 

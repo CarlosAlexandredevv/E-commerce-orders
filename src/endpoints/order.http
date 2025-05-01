@@ -23,6 +23,7 @@ Content-Type: application/json
     "name": "João da Silva",
     "telefone": "11988887777",
     "cpf": "123.456.789-00",
+    "email": "teste@gmail.com",
     "address": {
       "logradouro": "Rua Exemplo",
       "numero": "123",

@@ -18,8 +18,14 @@ export class CreateOrderUseCase {
   ) {}
 
   async execute(data: CreateOrderDto) {
-    const customer = this.customerRepo.create(data.customer);
-    await this.customerRepo.save(customer);
+    let customer = await this.customerRepo.findOne({
+      where: { email: data.customer.email },
+    });
+
+    if (!customer) {
+      customer = this.customerRepo.create(data.customer);
+      await this.customerRepo.save(customer);
+    }
 
     const products = data.products.map((prod) => this.productRepo.create(prod));
     await this.productRepo.save(products);
@@ -27,7 +33,7 @@ export class CreateOrderUseCase {
     const order = this.orderRepo.create({
       customer,
       products,
-      status: 'Pendente',
+      status: 'Pending',
     });
     await this.orderRepo.save(order);
 
