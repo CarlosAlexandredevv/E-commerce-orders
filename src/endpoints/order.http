@@ -1,23 +1,12 @@
+#  Registrar Pedido
 POST http://localhost:3000/orders
 Content-Type: application/json
 
 {
   "products": [
-    {
-      "name": "Notebook Dell",
-      "quantity": 2,
-      "price": 4500
-    },
-    {
-      "name": "Mouse Logitech",
-      "quantity": 1,
-      "price": 150
-    },
-    {
-      "name": "Teclado Mecânico",
-      "quantity": 1,
-      "price": 300
-    }
+    { "name": "Notebook Dell", "quantity": 2, "price": 4500 },
+    { "name": "Mouse Logitech", "quantity": 1, "price": 150 },
+    { "name": "Teclado Mecânico", "quantity": 1, "price": 300 }
   ],
   "customer": {
     "name": "João da Silva",
@@ -36,17 +25,30 @@ Content-Type: application/json
   }
 }
 
+# Consultar Pedidos
+
 ###
+
+# Buscar todos os pedidos processados:
 GET http://localhost:3000/orders?status=Processed
 
 ###
-GET http://localhost:3000/orders?startDate=2024-05-01&endDate=2024-05-01
 
-###
+# Buscar pedidos processados em 01/05/2025:
 GET http://localhost:3000/orders?status=Processed&startDate=2025-05-01T00:00:00Z&endDate=2025-05-01T23:59:59Z
 
 ###
+
+# Buscar pedidos criados em 01/05/2024
+GET http://localhost:3000/orders?startDate=2024-05-01
+
+###
+
+# Buscar todos os pedidos criados em 01/05/2025:
 GET http://localhost:3000/orders?startDate=2025-05-01T00:00:00Z&endDate=2025-05-01T23:59:59Z
 
 ###
+
+# Buscar pedidos pendentes em 01/05/2025:
+
 GET http://localhost:3000/orders?status=Pending&startDate=2025-05-01T00:00:00Z&endDate=2025-05-01T23:59:59Z
