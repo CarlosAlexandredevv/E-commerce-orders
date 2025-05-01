@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrderEntity } from '../../infrastructure/db/order.entity';
-import { OrderStatus } from 'src/domain/enum/order-status';
+import { OrderStatus } from '../../domain/enum/order-status';
 
 @Processor('order')
 @Injectable()
@@ -17,10 +17,11 @@ export class OrderProcessor {
   ) {}
 
   @Process('processOrder')
-  async handleProcessOrder(job: Job<{ orderId: number }>) {
+  async handleProcessOrder(job: Job<{ orderId: string }>) {
+    // <-- string aqui
     const { orderId } = job.data;
     const order = await this.orderRepo.findOne({
-      where: { id: orderId.toString() },
+      where: { id: orderId }, // id é string
     });
 
     if (!order) {

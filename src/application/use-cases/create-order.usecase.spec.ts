@@ -6,6 +6,8 @@ import { OrderEntity } from '../../infrastructure/db/order.entity';
 import { CustomerEntity } from '../../infrastructure/db/customer.entity';
 import { ProductEntity } from '../../infrastructure/db/product.entity';
 import { CreateOrderDto } from '../../interfaces/controllers/dto/create-order.dto';
+import { OrderStatus } from '../../domain/enum/order-status';
+import { getQueueToken } from '@nestjs/bull';
 
 const mockOrderForProduct: Partial<OrderEntity> = {
   id: 'order-placeholder-uuid',
@@ -40,7 +42,7 @@ const mockOrder: Partial<OrderEntity> = {
   products: mockProducts as ProductEntity[],
   createdAt: new Date(),
   processedAt: new Date(),
-  status: 'Pending',
+  status: OrderStatus.Pending,
 };
 
 const mockOrderRepository = {
@@ -77,6 +79,10 @@ describe('CreateOrderUseCase (Simple)', () => {
         {
           provide: getRepositoryToken(ProductEntity),
           useValue: mockProductRepository,
+        },
+        {
+          provide: getQueueToken('order'),
+          useValue: { add: jest.fn() },
         },
       ],
     }).compile();

@@ -7,7 +7,7 @@ import { ProductEntity } from '../../infrastructure/db/product.entity';
 import { CreateOrderDto } from '../../interfaces/controllers/dto/create-order.dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import { OrderStatus } from 'src/domain/enum/order-status';
+import { OrderStatus } from '../../domain/enum/order-status';
 
 @Injectable()
 export class CreateOrderUseCase {
