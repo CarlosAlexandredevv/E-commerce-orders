@@ -1,12 +1,12 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, BadRequestException } from '@nestjs/common';
 import { ProductEntity } from '../../infrastructure/db/product.entity';
 import { CreateOrderDto } from '../../interfaces/controllers/dto/create-order.dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { OrderStatus } from '../../domain/enum/order-status';
-import { IOrderRepository } from 'src/domain/repositories/order.repository';
-import { ICustomerRepository } from 'src/domain/repositories/customer.repository';
-import { IProductRepository } from 'src/domain/repositories/product.repository';
+import { IOrderRepository } from '../../domain/repositories/order.repository';
+import { ICustomerRepository } from '../../domain/repositories/customer.repository';
+import { IProductRepository } from '../../domain/repositories/product.repository';
 import { CustomerEntity } from '../../infrastructure/db/customer.entity';
 import {
   ORDER_REPOSITORY,
@@ -28,22 +28,24 @@ export class CreateOrderUseCase {
   ) {}
 
   async execute(data: CreateOrderDto) {
-    const customer = await this.upsertCustomer(data.customer);
-    const products = await this.createProducts(data.products);
+    try {
+      const customer = await this.upsertCustomer(data.customer);
+      const products = await this.createProducts(data.products);
 
-    const order = this.orderRepo.create({
-      customer,
-      products,
-      status: OrderStatus.Pending,
-    });
+      const order = this.orderRepo.create({
+        customer,
+        products,
+        status: OrderStatus.Pending,
+      });
 
-    const savedOrder = await this.orderRepo.save(order);
+      const savedOrder = await this.orderRepo.save(order);
 
-    await this.orderQueue.add('processOrder', { orderId: savedOrder.id });
+      await this.orderQueue.add('processOrder', { orderId: savedOrder.id });
 
-    return {
-      order: savedOrder,
-    };
+      return { order: savedOrder };
+    } catch {
+      throw new BadRequestException('Failed to create order');
+    }
   }
 
   private async upsertCustomer(

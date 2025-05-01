@@ -1,9 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { OrderProcessor } from './order.processor';
-import { OrderEntity } from '../../infrastructure/db/order.entity';
 import { OrderStatus } from '../../domain/enum/order-status';
 import { Job } from 'bull';
+import { ORDER_REPOSITORY } from '../../domain/tokens/repository.tokens';
 
 const mockOrder = {
   id: 'order-uuid-123',
@@ -12,7 +11,7 @@ const mockOrder = {
 };
 
 const mockOrderRepository = {
-  findOne: jest.fn(),
+  findOneById: jest.fn(),
   save: jest.fn(),
 };
 
@@ -26,7 +25,7 @@ describe('OrderProcessor', () => {
       providers: [
         OrderProcessor,
         {
-          provide: getRepositoryToken(OrderEntity),
+          provide: ORDER_REPOSITORY,
           useValue: mockOrderRepository,
         },
       ],
@@ -36,7 +35,7 @@ describe('OrderProcessor', () => {
   });
 
   it('should process order and update status and processedAt', async () => {
-    mockOrderRepository.findOne.mockResolvedValue({ ...mockOrder });
+    mockOrderRepository.findOneById.mockResolvedValue({ ...mockOrder });
     mockOrderRepository.save.mockResolvedValue({
       ...mockOrder,
       status: OrderStatus.Processed,
@@ -49,9 +48,7 @@ describe('OrderProcessor', () => {
 
     await processor.handleProcessOrder(job);
 
-    expect(mockOrderRepository.findOne).toHaveBeenCalledWith({
-      where: { id: mockOrder.id },
-    });
+    expect(mockOrderRepository.findOneById).toHaveBeenCalledWith(mockOrder.id);
     expect(mockOrderRepository.save).toHaveBeenCalledWith(
       expect.objectContaining({
         status: OrderStatus.Processed,
@@ -61,7 +58,7 @@ describe('OrderProcessor', () => {
   });
 
   it('should throw error if order not found', async () => {
-    mockOrderRepository.findOne.mockResolvedValue(null);
+    mockOrderRepository.findOneById.mockResolvedValue(null);
 
     const job = {
       data: { orderId: 'not-exist' },
