@@ -35,3 +35,18 @@ Content-Type: application/json
     }
   }
 }
+
+###
+GET http://localhost:3000/orders?status=Processed
+
+###
+GET http://localhost:3000/orders?startDate=2024-05-01&endDate=2024-05-01
+
+###
+GET http://localhost:3000/orders?status=Processed&startDate=2025-05-01T00:00:00Z&endDate=2025-05-01T23:59:59Z
+
+###
+GET http://localhost:3000/orders?startDate=2025-05-01T00:00:00Z&endDate=2025-05-01T23:59:59Z
+
+###
+GET http://localhost:3000/orders?status=Pending&startDate=2025-05-01T00:00:00Z&endDate=2025-05-01T23:59:59Z
