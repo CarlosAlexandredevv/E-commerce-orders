@@ -18,10 +18,9 @@ export class OrderProcessor {
 
   @Process('processOrder')
   async handleProcessOrder(job: Job<{ orderId: string }>) {
-    // <-- string aqui
     const { orderId } = job.data;
     const order = await this.orderRepo.findOne({
-      where: { id: orderId }, // id é string
+      where: { id: orderId },
     });
 
     if (!order) {

@@ -1,23 +1,28 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { OrderEntity } from '../../infrastructure/db/order.entity';
-import { CustomerEntity } from '../../infrastructure/db/customer.entity';
+import { Injectable, Inject } from '@nestjs/common';
 import { ProductEntity } from '../../infrastructure/db/product.entity';
 import { CreateOrderDto } from '../../interfaces/controllers/dto/create-order.dto';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import { OrderStatus } from '../../domain/enum/order-status';
+import { IOrderRepository } from 'src/domain/repositories/order.repository';
+import { ICustomerRepository } from 'src/domain/repositories/customer.repository';
+import { IProductRepository } from 'src/domain/repositories/product.repository';
+import { CustomerEntity } from '../../infrastructure/db/customer.entity';
+import {
+  ORDER_REPOSITORY,
+  CUSTOMER_REPOSITORY,
+  PRODUCT_REPOSITORY,
+} from 'src/domain/tokens/repository.tokens';
 
 @Injectable()
 export class CreateOrderUseCase {
   constructor(
-    @InjectRepository(OrderEntity)
-    private readonly orderRepo: Repository<OrderEntity>,
-    @InjectRepository(CustomerEntity)
-    private readonly customerRepo: Repository<CustomerEntity>,
-    @InjectRepository(ProductEntity)
-    private readonly productRepo: Repository<ProductEntity>,
+    @Inject(ORDER_REPOSITORY)
+    private readonly orderRepo: IOrderRepository,
+    @Inject(CUSTOMER_REPOSITORY)
+    private readonly customerRepo: ICustomerRepository,
+    @Inject(PRODUCT_REPOSITORY)
+    private readonly productRepo: IProductRepository,
     @InjectQueue('order')
     private readonly orderQueue: Queue,
   ) {}
@@ -44,9 +49,7 @@ export class CreateOrderUseCase {
   private async upsertCustomer(
     customerData: Partial<CustomerEntity>,
   ): Promise<CustomerEntity> {
-    let customer = await this.customerRepo.findOne({
-      where: { email: customerData.email },
-    });
+    let customer = await this.customerRepo.findByEmail(customerData.email!);
 
     if (!customer) {
       customer = this.customerRepo.create(customerData);

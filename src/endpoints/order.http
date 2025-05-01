@@ -21,7 +21,7 @@ Content-Type: application/json
   ],
   "customer": {
     "name": "João da Silva",
-    "telefone": "11988887777",
+    "telefone": "119888877764647",
     "cpf": "123.456.789-00",
     "email": "teste@gmail.com",
     "address": {
