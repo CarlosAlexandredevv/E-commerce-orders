@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { CustomerEntity } from './customer.entity';
 import { ProductEntity } from './product.entity';
+import { OrderStatus } from 'src/domain/enum/order-status';
 
 @Entity('orders')
 export class OrderEntity {
@@ -18,8 +19,8 @@ export class OrderEntity {
   @CreateDateColumn()
   createdAt: Date;
 
-  @Column({ default: 'Pendente' })
-  status: string;
+  @Column({ type: 'enum', enum: OrderStatus, default: OrderStatus.Pending })
+  status: OrderStatus;
 
   @Column({ type: 'timestamp', nullable: true })
   processedAt: Date;

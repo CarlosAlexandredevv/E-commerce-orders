@@ -6,7 +6,6 @@ import { AddressEntity } from 'src/infrastructure/db/address.entity';
 
 const isDev = process.env.NODE_ENV === 'development';
 const isTest = process.env.NODE_ENV === 'test';
-const isProd = process.env.NODE_ENV === 'production';
 
 export const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'postgres',
@@ -16,6 +15,6 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
   entities: [OrderEntity, CustomerEntity, ProductEntity, AddressEntity],
-  synchronize: isDev || isTest || isProd,
-  logging: isDev || isTest || isProd,
+  synchronize: isDev || isTest,
+  logging: isDev,
 };

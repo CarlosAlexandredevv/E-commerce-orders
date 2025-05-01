@@ -10,6 +10,8 @@
     "interfaces": "interface",
     "controllers": "controller",
     "dto": "typescript",
-    "entities": "class"
+    "entities": "class",
+    "processors": "robot",
+    "endpoints": "api"
   }
 }

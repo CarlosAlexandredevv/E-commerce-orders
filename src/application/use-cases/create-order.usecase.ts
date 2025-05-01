@@ -5,6 +5,9 @@ import { OrderEntity } from '../../infrastructure/db/order.entity';
 import { CustomerEntity } from '../../infrastructure/db/customer.entity';
 import { ProductEntity } from '../../infrastructure/db/product.entity';
 import { CreateOrderDto } from '../../interfaces/controllers/dto/create-order.dto';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
+import { OrderStatus } from 'src/domain/enum/order-status';
 
 @Injectable()
 export class CreateOrderUseCase {
@@ -15,6 +18,8 @@ export class CreateOrderUseCase {
     private readonly customerRepo: Repository<CustomerEntity>,
     @InjectRepository(ProductEntity)
     private readonly productRepo: Repository<ProductEntity>,
+    @InjectQueue('order')
+    private readonly orderQueue: Queue,
   ) {}
 
   async execute(data: CreateOrderDto) {
@@ -24,10 +29,12 @@ export class CreateOrderUseCase {
     const order = this.orderRepo.create({
       customer,
       products,
-      status: 'Pending',
+      status: OrderStatus.Pending,
     });
 
     const savedOrder = await this.orderRepo.save(order);
+
+    await this.orderQueue.add('processOrder', { orderId: savedOrder.id });
 
     return {
       order: savedOrder,
